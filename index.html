@@ -4,26 +4,287 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Dziennik Chaosu</title>
-<link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#D46A6A" />
+<title>Dziennik Chaosu - Rozbudowany</title>
 <style>
-  body { background: #2E1A47; color: #D46A6A; font-family: 'Arial', sans-serif; margin: 0; padding: 20px; }
-  h1 { text-align: center; }
-  p { max-width: 600px; margin: 20px auto; line-height: 1.5; }
+  @import url('https://fonts.googleapis.com/css2?family=Poppins&family=Permanent+Marker&display=swap');
+
+  body {
+    margin: 0; padding: 0;
+    background: #2E1A47;
+    font-family: 'Poppins', sans-serif;
+    color: #FFF8E1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+
+  header {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 3rem;
+    color: #D46A6A;
+    margin-bottom: 0.3rem;
+    text-shadow: 2px 2px 6px #6A0DAD;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #F9A825;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-align: center;
+    max-width: 450px;
+  }
+
+  #newEntryForm {
+    background: linear-gradient(135deg, #6A0DAD 0%, #D46A6A 100%);
+    padding: 1rem 1.5rem;
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px rgba(212, 106, 106, 0.6);
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 2rem;
+    transform: rotate(-2deg);
+  }
+
+  #newEntryForm textarea {
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    padding: 0.8rem;
+    font-size: 1rem;
+    resize: vertical;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  #newEntryForm input[type="url"] {
+    margin-top: 0.7rem;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    padding: 0.6rem;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  #newEntryForm button {
+    margin-top: 1rem;
+    background: #F9A825;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #2E1A47;
+    font-size: 1rem;
+    box-shadow: 2px 2px 8px rgba(250, 200, 20, 0.5);
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+
+  #newEntryForm button:hover {
+    background: #D46A6A;
+    color: #FFF8E1;
+    box-shadow: 4px 4px 12px rgba(212, 106, 106, 0.7);
+    transform: scale(1.05);
+  }
+
+  #entries {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    justify-content: center;
+  }
+
+  .entry {
+    background: linear-gradient(135deg, #6A0DAD 0%, #D46A6A 100%);
+    box-shadow: 5px 5px 15px rgba(212, 106, 106, 0.6);
+    border-radius: 15px;
+    padding: 1rem 1.2rem;
+    width: 220px;
+    position: relative;
+    transform-origin: center;
+    cursor: pointer;
+    color: #FFF8E1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    animation: entryAppear 0.6s ease forwards;
+  }
+
+  /* Rotate entries slightly randomly for chaos vibe */
+  .entry:nth-child(3n) { transform: rotate(-3deg); }
+  .entry:nth-child(3n+1) { transform: rotate(2deg); }
+  .entry:nth-child(3n+2) { transform: rotate(-1deg); }
+
+  .entry:hover {
+    box-shadow: 8px 8px 20px rgba(249, 168, 37, 0.9);
+    transform: rotate(0deg) scale(1.07);
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+
+  .entry p {
+    font-size: 1rem;
+    line-height: 1.4;
+    flex-grow: 1;
+    white-space: pre-wrap;
+  }
+
+  .entry img {
+    max-width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  }
+
+  .deleteBtn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(249, 168, 37, 0.85);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #2E1A47;
+    font-size: 1.2rem;
+    line-height: 28px;
+    text-align: center;
+    transition: background 0.3s ease;
+  }
+
+  .deleteBtn:hover {
+    background: #D46A6A;
+    color: #FFF8E1;
+  }
+
+  @keyframes entryAppear {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeScaleOut {
+    to {
+      opacity: 0;
+      transform: scale(0.5) rotate(10deg);
+      height: 0;
+      margin-bottom: 0;
+      padding: 0;
+    }
+  }
+
+  .removing {
+    animation: fadeScaleOut 1s forwards;
+  }
+
+  /* Scrollbar styling for textarea */
+  textarea::-webkit-scrollbar {
+    width: 8px;
+  }
+  textarea::-webkit-scrollbar-thumb {
+    background: #D46A6A;
+    border-radius: 10px;
+  }
+
 </style>
 </head>
 <body>
-  <h1>Dziennik Chaosu</h1>
-  <p>Twój dziennik na chwile pełne kreatywnego chaosu. Zapisuj myśli, pomysły i memy.</p>
+
+<header>Dziennik Chaosu</header>
+<div class="subtitle">Każdy chaos ma dwie strony — uporządkuj swój świat inaczej</div>
+
+<form id="newEntryForm">
+  <textarea id="entryText" rows="4" placeholder="Co masz na myśli? Napisz swój chaos..."></textarea>
+  <input type="url" id="entryImage" placeholder="Link do obrazka / mema (opcjonalnie)" />
+  <button type="submit">Dodaj wpis</button>
+</form>
+
+<div id="entries"></div>
+
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(reg => console.log('Service Worker zarejestrowany:', reg.scope))
-        .catch(err => console.log('Błąd rejestracji SW:', err));
-    });
+  const form = document.getElementById('newEntryForm');
+  const entriesContainer = document.getElementById('entries');
+
+  function createEntryElement(text, imageUrl) {
+    const entry = document.createElement('div');
+    entry.className = 'entry';
+
+    const p = document.createElement('p');
+    p.textContent = text;
+    entry.appendChild(p);
+
+    if (imageUrl) {
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = 'Obrazek do wpisu';
+      img.onerror = () => img.remove();
+      entry.appendChild(img);
+    }
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'deleteBtn';
+    deleteBtn.innerHTML = '×';
+    deleteBtn.title = 'Usuń wpis';
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      entry.classList.add('removing');
+      setTimeout(() => entry.remove(), 1000);
+    };
+
+    entry.appendChild(deleteBtn);
+
+    return entry;
   }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const text = document.getElementById('entryText').value.trim();
+    const imageUrl = document.getElementById('entryImage').value.trim();
+
+    if (!text && !imageUrl) {
+      alert('Dodaj tekst lub link do obrazka.');
+      return;
+    }
+
+    const newEntry = createEntryElement(text, imageUrl);
+    entriesContainer.prepend(newEntry);
+
+    form.reset();
+  });
+
+  // Przykładowe wpisy startowe:
+  const sampleEntries = [
+    {
+      text: 'Dziś chaos w głowie jak nigdy, ale udało się coś uchwycić.',
+      image: 'https://i.imgur.com/U3vTGjX.jpg' // przykładowy mem
+    },
+    {
+      text: 'Pomiędzy nieładem pojawiły się kolory i pomysły.',
+      image: ''
+    },
+    {
+      text: 'Chaos to energia, która pcha do przodu!',
+      image: 'https://i.imgur.com/1xHpl6m.jpg'
+    }
+  ];
+
+  sampleEntries.forEach(({text, image}) => {
+    entriesContainer.appendChild(createEntryElement(text, image));
+  });
 </script>
+
 </body>
 </html>
