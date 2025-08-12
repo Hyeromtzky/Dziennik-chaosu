@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dziennik Chaosu</title>
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#D46A6A" />
+<style>
+  body { background: #2E1A47; color: #D46A6A; font-family: 'Arial', sans-serif; margin: 0; padding: 20px; }
+  h1 { text-align: center; }
+  p { max-width: 600px; margin: 20px auto; line-height: 1.5; }
+</style>
+</head>
+<body>
+  <h1>Dziennik Chaosu</h1>
+  <p>Twój dziennik na chwile pełne kreatywnego chaosu. Zapisuj myśli, pomysły i memy.</p>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('Service Worker zarejestrowany:', reg.scope))
+        .catch(err => console.log('Błąd rejestracji SW:', err));
+    });
+  }
+</script>
+</body>
+</html>
